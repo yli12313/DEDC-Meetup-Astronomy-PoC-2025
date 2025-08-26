@@ -1,12 +1,14 @@
 import requests
 from datetime import datetime
+import csv
+from io import StringIO
 
 def fetch_exoplanet_data():
     """
     """
 
     """Fetch exoplanet data from NASA Exoplanet Archive"""
-    api = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+hostname,pl_name,pl_rade,pl_masse+from+ps+where+pl_rade+<+=+1.8+and+pl_masse+>+0+and+disc_facility+=+'Transiting Exoplanet Survey Satellite (TESS)'&format=csv"
+    api = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+hostname,pl_name,pl_rade,pl_masse,rowupdate+from+ps+where+pl_rade+<+=+1.8+and+pl_masse+>+0+and+disc_facility+=+'Transiting Exoplanet Survey Satellite (TESS)'&format=csv"
     
     try:
         print("Fetching exoplanet data...")
@@ -20,7 +22,7 @@ def fetch_exoplanet_data():
         return None
 
 def save_csv_data(data, filename=None):
-    """Save CSV data to file"""
+    """Save CSV data to file, deduplicated by hostname/pl_name keeping most recent rowupdate"""
     if not data:
         print("No data to save")
         return None
@@ -30,14 +32,53 @@ def save_csv_data(data, filename=None):
         filename = f"tess_exoplanets_{timestamp}.csv"
     
     try:
-        with open(filename, 'w', newline='', encoding='utf-8') as f:
-            f.write(data)
+        # Parse CSV data
+        csv_reader = csv.reader(StringIO(data))
+        rows = list(csv_reader)
         
-        print(f"Data saved to {filename}")
+        if len(rows) < 2:  # No data rows to process
+            with open(filename, 'w', newline='', encoding='utf-8') as f:
+                f.write(data)
+        else:
+            header = rows[0]
+            data_rows = rows[1:]
+            
+            # Create dictionary to store most recent entry for each hostname/pl_name combination
+            unique_planets = {}
+            original_count = len(data_rows)
+            
+            for row in data_rows:
+                hostname = row[0]
+                pl_name = row[1]
+                rowupdate = row[4]
+                
+                key = (hostname, pl_name)
+                
+                # If this planet combination doesn't exist or this row has a more recent update
+                if key not in unique_planets or rowupdate > unique_planets[key][4]:
+                    unique_planets[key] = row
+            
+            # Convert back to list and sort
+            deduplicated_rows = list(unique_planets.values())
+            deduplicated_rows.sort(key=lambda x: (x[0], x[1], x[4]))
+            
+            # Write deduplicated and sorted data
+            with open(filename, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(header)
+                writer.writerows(deduplicated_rows)
+            
+            duplicates_removed = original_count - len(deduplicated_rows)
+            print(f"Data saved to {filename}")
+            print(f"Removed {duplicates_removed} duplicate entries, kept {len(deduplicated_rows)} unique planets")
+        
         return filename
     
     except IOError as e:
         print(f"Error saving file: {e}")
+        return None
+    except Exception as e:
+        print(f"Error processing CSV data: {e}")
         return None
 
 def main():
@@ -52,9 +93,7 @@ def main():
         filename = save_csv_data(data)
         
         if filename:
-            # Count rows (excluding header)
-            rows = data.strip().split('\n')
-            print(f"Successfully saved {len(rows) - 1} exoplanet records")
+            print("Data pipeline completed successfully")
         else:
             print("Failed to save data")
     else:
