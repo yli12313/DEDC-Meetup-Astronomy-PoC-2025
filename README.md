@@ -2,6 +2,8 @@
 
 A Python data pipeline for fetching, analyzing, and visualizing exoplanet data from the NASA Exoplanet Archive, focusing on planets discovered by the Transiting Exoplanet Survey Satellite (TESS).
 
+<img width="3224" height="1612" alt="image" src="https://github.com/user-attachments/assets/5626939c-d1a3-4287-b251-551206afd0b4" />
+
 ## Overview
 
 This project demonstrates a complete data engineering workflow for processing astronomical data. It fetches exoplanet data from NASA's archive, stores it in a PostgreSQL database, and generates comprehensive visualizations and statistical analyses.
