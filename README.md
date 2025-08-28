@@ -1,5 +1,7 @@
 # TESS Exoplanet Data Pipeline
 
+### Was honored to present the following project at the Data Engineering DC meetup. My presentation is located (here)[https://github.com/yli12313/Presentations-Given/blob/main/20250827_DEDC_Astronomy_PoC/20250827_Data_Engineering_DC_Astronomy_PoC.pdf]!
+
 A Python data pipeline for fetching, analyzing, and visualizing exoplanet data from the *NASA Exoplanet Archive*, focusing on planets discovered by the **Transiting Exoplanet Survey Satellite (TESS)**.
 
 <img width="1956" height="1420" alt="image" src="https://github.com/user-attachments/assets/0629361a-c8aa-4b61-9309-9964a2d4ac9f" />
