@@ -4,7 +4,7 @@
 
 A Python data pipeline for fetching, analyzing, and visualizing exoplanet data from the *NASA Exoplanet Archive*, focusing on planets discovered by the **Transiting Exoplanet Survey Satellite (TESS)**.
 
-<img width="774" height="445" alt="image" src="https://github.com/user-attachments/assets/c3b4740b-e928-4f42-8b1b-1193622b104b" />
+<img width="854" height="446" alt="image" src="https://github.com/user-attachments/assets/1b3fcb9c-d336-4ccb-b156-b652ec4cbeee" />
 
 ## Overview
 
